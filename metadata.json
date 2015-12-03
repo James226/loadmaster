@@ -1,0 +1,13 @@
+{
+  "name": "james226-loadmaster",
+  "version": "0.1.0",
+  "author": "James Parker",
+  "summary": null,
+  "license": "Apache 2.0",
+  "source": "",
+  "project_page": "https://github.com/james226/loadmaster",
+  "issues_url": "https://github.com/james226/loadmaster/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ]
+}
