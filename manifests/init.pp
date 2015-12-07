@@ -35,7 +35,7 @@
 #
 # Copyright 2015 Your name here, unless otherwise noted.
 #
-class loadmaster ($ip, $username, $password) {
+#class loadmaster ($ip, $username, $password) {
 
 
-}
+#}
