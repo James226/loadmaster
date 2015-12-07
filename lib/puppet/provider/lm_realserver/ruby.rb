@@ -2,9 +2,9 @@ require 'net/http'
 require 'rexml/document'
 include REXML
 
-Puppet::Type.type(:lm_virtualservice).provide(:ruby) do
+Puppet::Type.type(:lm_realserver).provide(:ruby) do
   def exists?
-      url = "https://#{resource[:host_ip]}/access/showvs?vs=#{resource[:ip]}&port=#{resource[:port]}&prot=#{resource[:protocol]}"
+      url = "https://#{resource[:host_ip]}/access/showrs?vs=#{resource[:virtual_ip]}&port=#{resource[:virtual_port]}&prot=#{resource[:virtual_protocol]}&rs=#{resource[:ip]}&rsport=#{resource[:port]}"
 
       response = Document.new webrequest(url, resource[:host_username], resource[:host_password])
 #       response = Document.new <<EOF
@@ -21,9 +21,8 @@ Puppet::Type.type(:lm_virtualservice).provide(:ruby) do
   end
 
   def create
-      puts "Creating virtual service '#{resource[:name]}'"
-      url = "https://#{resource[:host_ip]}/access/addvs?vs=#{resource[:ip]}&port=#{resource[:port]}&prot=#{resource[:protocol]}"
-
+      puts "Creating real server '#{resource[:name]}'"
+      url = "https://#{resource[:host_ip]}/access/addrs?vs=#{resource[:virtual_ip]}&port=#{resource[:virtual_port]}&prot=#{resource[:virtual_protocol]}&rs=#{resource[:ip]}&rsport=#{resource[:port]}"
       response = Document.new webrequest(url, resource[:host_username], resource[:host_password])
 #       response = Document.new <<EOF
 #       <Response stat="422" code="success">
@@ -32,13 +31,13 @@ Puppet::Type.type(:lm_virtualservice).provide(:ruby) do
 # EOF
 
       if response.root.attributes["code"] == "fail"
-          raise Puppet::ParseError, "Failed to create virtual service '#{resource[:name]}', response code: #{response.root.attributes['stat']}"
+          raise Puppet::ParseError, "Failed to create real server '#{resource[:name]}', response code: #{response.root.attributes['stat']}"
       end
   end
 
   def destroy
-      puts "Deleting virtual service '#{resource[:name]}'"
-      url = "https://#{resource[:host_ip]}/access/delvs?vs=#{resource[:ip]}&port=#{resource[:port]}&prot=#{resource[:protocol]}"
+      puts "Deleting real server '#{resource[:name]}'"
+      url = "https://#{resource[:host_ip]}/access/delrs?vs=#{resource[:virtual_ip]}&port=#{resource[:virtual_port]}&prot=#{resource[:virtual_protocol]}&rs=#{resource[:ip]}&rsport=#{resource[:port]}"
 
       response = Document.new webrequest(url, resource[:host_username], resource[:host_password])
 #         response = Document.new <<EOF
@@ -48,12 +47,11 @@ Puppet::Type.type(:lm_virtualservice).provide(:ruby) do
 # EOF
 
       if response.root.attributes["code"] == "fail"
-          raise Puppet::ParseError, "Failed to delete virtual service '#{resource[:name]}', response code: #{response.root.attributes['stat']}"
+          raise Puppet::ParseError, "Failed to delete real server '#{resource[:name]}', response code: #{response.root.attributes['stat']}"
       end
   end
 
   def webrequest(url, username, password)
-      puts url
       puts "Invoking web request: #{url}"
       url = URI.parse(url)
       req = Net::HTTP::Get.new(url.to_s)
